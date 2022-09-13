@@ -14,6 +14,7 @@ You need to have generated both keys with appropriate access.
 |---------|-----------------|
 | GitHub  | GITHUB_TOKEN    |
 |FreshDesk| FRESHDESK_TOKEN |
+
 For Instructions on how to set your Environment variables you can use [Twilio's guide](https://www.twilio.com/blog/2017/01/how-to-set-environment-variables.html) on the topic, covering all common operating systems.
 
 ### Build
