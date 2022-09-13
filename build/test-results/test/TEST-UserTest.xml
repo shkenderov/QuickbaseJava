@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="UserTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2022-09-13T14:31:16" hostname="DESKTOP-M0V8EDA" time="5.48">
+  <properties/>
+  <testcase name="testFreshdeskDuplicateSubmit()" classname="UserTest" time="1.016"/>
+  <testcase name="getPrivateEmail()" classname="UserTest" time="0.0"/>
+  <testcase name="getIdWithBadDomain()" classname="UserTest" time="0.553"/>
+  <testcase name="testGithubRetreivalWithEmptyObj()" classname="UserTest" time="0.693"/>
+  <testcase name="testGithubObjOverwrite()" classname="UserTest" time="0.553"/>
+  <testcase name="updateUser()" classname="UserTest" time="1.781"/>
+  <testcase name="saveToFreshdeskWithBadEmail()" classname="UserTest" time="0.471"/>
+  <testcase name="saveToFreshdeskWithNotNullDates()" classname="UserTest" time="0.0"/>
+  <testcase name="saveEmptyToFreshdesk()" classname="UserTest" time="0.0"/>
+  <testcase name="getByEmailEmpty()" classname="UserTest" time="0.406"/>
+  <system-out><![CDATA[404
+200
+400
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
