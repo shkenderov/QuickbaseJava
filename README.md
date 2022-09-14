@@ -56,4 +56,4 @@ This application consists of a User Object, where all the necessary methods are 
 * The `setFreshdeskContactIDByEmail()` Method of the User Object does not set the `freshdesk_id` as the `GET` Request returns an Empty JSON Array (`[]`] in the Request Body.
 * This causes the `saveToFreshdesk()` method to be called, which then returns a `409 Conflict`, as in the Request Response. 
 * This Causes the Program to return `"Error Registering User. Check if user with such Emails and Twitter already exists."`
-* A short video clip of this issue is [uploaded](https://github.com/shkenderov/QuickbaseJava/blob/master/FreshDeskAPIBug.mp4).
+* A short video clip of this issue is [uploaded](https://github.com/shkenderov/QuickbaseJava/blob/main/FreshDeskAPIBug.mp4).
