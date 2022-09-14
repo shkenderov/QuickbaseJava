@@ -15,38 +15,28 @@ public class Main {
         User user = new User();
         user.getGithubAcc();
 
-        System.out.println(user.setFreshdeskContactIDByEmail(domainName));
-/*
         if(user.getGithubAcc()==200){
-            if(user.getEmail()!=null){
-
-                    if(user.setFreshdeskContactIDByEmail(domainName)==404){
-                        System.out.println("Bad Domain Name");
-                        return;
-                    }
-                    if(user.getFreshdesk_id()!=null){
-                        System.out.println(user.updateUser(domainName));
-                        if(user.updateUser(domainName)==200){
-                            System.out.println("Successfully Updated User Credentials");
-                        }
-                        else{
-                            System.out.println("User not found, Registering..");
-                        }
+                if(user.setFreshdeskContactIDByEmail(domainName)==404){
+                    System.out.println("Bad Domain Name");
+                    return;
+                }
+                if(user.getFreshdesk_id()!=null){
+                    if(user.updateUser(domainName)==200){
+                        System.out.println("Successfully Updated User Credentials");
                     }
                     else{
-                        if(user.saveToFreshdesk(domainName)==201){
-                            System.out.println("Successfully Registered");
-                        }
-                        else{
-                            user.toString();
-                            System.out.println("Error Registering User. Check if user with such Emails and Twitter already exists.");
-                        }
+                        System.out.println("User not found, Registering..");
                     }
                 }
-
-
+                else{
+                    if(user.saveToFreshdesk(domainName)==201){
+                        System.out.println("Successfully Registered");
+                    }
+                    else{
+                        System.out.println("Error Registering User. Check if user with such Emails and Twitter already exists.");
+                    }
+                }
         }
-        else System.out.println("No such Github user found.");*/
+        else System.out.println("No such Github user found.");
     }
-
 }

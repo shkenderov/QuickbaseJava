@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class UserTest {
-    Date today = new Date();
-    String domainName = "iict-help";//test domain name, corresponding with Token
-
+    String domainName = "iicct";//test domain name, corresponding with Token
+    Date today=new Date();
     @Test
     void testGithubRetreivalWithEmptyObj(){
         User nullUser = new User();
@@ -18,26 +17,16 @@ class UserTest {
     }
     @Test
     void testGithubObjOverwrite(){
-        User user = new User("Petkan","pet26","petio@abv.bg","00023",today,today);
+        User user = new User("Petkan","pet26","petio@abv.bg",null,null,null);
         user.getGithubAcc();
-        assertAll("Should not contain any of: Petko, p@abv.bg, p144, 0000 ",
-                () -> assertNotEquals("p@abv.bg",user.getEmail()),
-                () -> assertNotEquals("Petko",user.getName()),
-                () -> assertNotEquals("p144",user.getTwitter_handle()),
-                () -> assertNotEquals("0000",user.getFreshdesk_id())
+        assertAll("Should not contain any of: Petko, p@abv.bg, p144 ",
+                () -> assertNotEquals("petio@abv.bg",user.getEmail()),
+                () -> assertNotEquals("Petkan",user.getName()),
+                () -> assertNotEquals("pet26",user.getTwitter_handle())
         );
     }
 
-    @Test
-    void testFreshdeskDuplicateSubmit() {//assuming no such user is in contacts already
 
-        User user = new User("Petko","p144","p@abv.bg","0000",null,null);
-        Integer res = user.saveToFreshdesk(domainName);
-        //assertEquals(201,res); //works only first time, after you have to change email
-        //res = user.saveToFreshdesk();
-        assertEquals(409,res);
-
-    }
 
     @Test
     void saveToFreshdeskWithNotNullDates(){
@@ -67,24 +56,22 @@ class UserTest {
     }
 
     @Test
-    void getPrivateEmail() {
-    }
-
-    @Test
     void updateUser() {
-        User user = new User("Pat James","pp21","patthew33@gmail.com",null,null,null);//assuming such user does not exist in contacts
-        user.saveToFreshdesk(domainName);
-        user.setFreshdeskContactIDByEmail(domainName);
-        user.setName("Patty James");
-        Integer reposnseCode = user.updateUser(domainName);
-        Date updatedUpdatedDate = user.getUpdated_at();
-        assertEquals(200,reposnseCode);
+        User usertoUpdate = new User("Bobby Tree","pp21","bob.tree@freshdesk.com",null,null,null);//assuming such user exist in contacts
+        usertoUpdate.setFreshdeskContactIDByEmail(domainName);
+        Integer reposnseCode = usertoUpdate.updateUser(domainName);
+        assertAll("ID must be set, should return 200",
+                () -> assertNotEquals(null,usertoUpdate.getFreshdesk_id()),
+                () ->    assertEquals(200,reposnseCode)//will throw 404 if limit exceeded
+         );
+
+
 
     }
 
     @Test
     void getIdWithBadDomain(){
-        User user = new User("Pat James","pp21","patthew33@gmail.com","151003143328",null,null);//assuming such user does not exist in contacts
+        User user = new User("Bob Trheeton","pp21","patthew33@gmail.com",null,null,null);//assuming such user does not exist in contacts
         Integer returnCode = user.setFreshdeskContactIDByEmail("baddomain");
         assertEquals(404,returnCode);
     }

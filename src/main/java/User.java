@@ -21,7 +21,7 @@ public class User {
     private String twitter_handle;
     private String email;
     private String freshdesk_id;
-    private Date created_at;//freshdesk created,for persistance
+    private Date created_at;//freshdesk dateTime created,for persistance
     private Date updated_at;//---||----
     private ArrayList<String> otherEmails;
 
@@ -48,14 +48,13 @@ public class User {
     public Integer setFreshdeskContactIDByEmail(String domainName){
 
 
-        String encodedString = Base64.getEncoder().encodeToString(System.getenv("FRESHDESK_TOKEN").getBytes());
+        String encodedString = Base64.getEncoder().encodeToString(System.getenv("FRESHDESK_TOKEN").getBytes());//Must be Base64 Encoded, based on API Docs
         Integer responseCode=0;
         try {
             URL url = new URL("https://"+domainName+".freshdesk.com/api/v2/contacts?email="+getEmail());
             HttpURLConnection http = (HttpURLConnection)url.openConnection();
             http.setRequestProperty("Authorization", "Basic "+encodedString+"==");
             responseCode=http.getResponseCode();
-            System.out.println(responseCode);
             if(responseCode/100!=2) return responseCode;
             BufferedReader in = new BufferedReader(new InputStreamReader(http.getInputStream()));
             String inputLine;
@@ -72,7 +71,7 @@ public class User {
             e.printStackTrace();
         }
         return responseCode;
-    }//tests written
+    }
 
     public Integer saveToFreshdesk(String domainName){
         if(getCreated_at()!=null||getUpdated_at()!=null||getEmail()==null)return 0;
@@ -86,7 +85,7 @@ public class User {
             http.setRequestProperty("Content-Type", "application/json");
             http.setRequestProperty("Authorization", "Basic "+encodedString);
             String data = "{ \"email\":\""+getEmail()+"\"";
-            if(getName()!=""){
+            if(getName()!=""){//name may be empty
                 data+=",\"name\":\""+getName()+"\"";
             }
             if(getOtherEmails().size()>0){
@@ -106,7 +105,7 @@ public class User {
             byte[] out = data.getBytes(StandardCharsets.UTF_8);
             OutputStream stream = http.getOutputStream();
             stream.write(out);
-            if(http.getResponseCode()==201) {
+            if(http.getResponseCode()==201) {//reading response, so we can set CreatedAt DateTime
                 BufferedInputStream bis = new BufferedInputStream(http.getInputStream());
                 ByteArrayOutputStream buf = new ByteArrayOutputStream();
                 int bisRead = bis.read();
@@ -117,8 +116,6 @@ public class User {
                 JsonObject jsonObject = JsonParser.parseString(buf.toString()).getAsJsonObject();
                 Date dateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(jsonObject.get("created_at").getAsString().substring(0, jsonObject.get("created_at").getAsString().length() - 1));
                 setCreated_at(dateTime);
-
-
             }
             http.disconnect();
             return http.getResponseCode();
@@ -127,9 +124,9 @@ public class User {
             e.printStackTrace();
             return 0;
         }
-    }//tests written
+    }
 
-    public Integer getEmails(){
+    private Integer getEmails(){//separate request in order to get non-public GitHub emails, only called within the class itself
         HttpClient httpClient =HttpClient.newHttpClient();
         Integer statuscode=null;
         try {
@@ -149,7 +146,7 @@ public class User {
                         setEmail(jsonArray.get(i).getAsJsonObject().get("email").getAsString());
                     }
                     else {
-                        if(!jsonArray.get(i).getAsJsonObject().get("email").getAsString().contains("@users.noreply.github.com"))
+                        if(!jsonArray.get(i).getAsJsonObject().get("email").getAsString().contains("@users.noreply.github.com"))//Github generated Email NoReply domain, no point in including it
                         otherEmailsIn.add(jsonArray.get(i).getAsJsonObject().get("email").getAsString());
                     }
                 }
@@ -165,7 +162,6 @@ public class User {
 
     public Integer updateUser(String domainName){
         String encodedString = Base64.getEncoder().encodeToString(System.getenv("FRESHDESK_TOKEN").getBytes());
-
         try {
             URL url = new URL("https://"+domainName+".freshdesk.com/api/v2/contacts/"+getFreshdesk_id());
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -189,7 +185,7 @@ public class User {
                 data+=", \"twitter_id\":\""+getTwitter_handle()+"\"}";
             }
             else{
-                data+="}";
+                data+=", \"twitter_id\":\"\"}";
             }
 
 
@@ -235,14 +231,10 @@ public class User {
             HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
             if(getResponse.statusCode()==200) {
                 JsonObject jsonObject = JsonParser.parseString(getResponse.body()).getAsJsonObject();
-                //
-                //Contact
-
-                if (!jsonObject.get("name").isJsonNull()) {
+                 if (!jsonObject.get("name").isJsonNull()) {
                     setName(jsonObject.get("name").getAsString());
                 }
-                    getEmails();
-
+                 getEmails();
                 if (!jsonObject.get("twitter_username").isJsonNull()) {
                     setTwitter_handle(jsonObject.get("twitter_username").getAsString());
                 }
@@ -256,32 +248,40 @@ public class User {
 
     }//tests written
 
-    public void setOtherEmails(ArrayList<String> otherEmails) {
-        this.otherEmails = otherEmails;
-    }
-
-    public ArrayList<String> getOtherEmails() {
-        return otherEmails;
-    }
-
-    public void setFreshdesk_id(String freshdesk_id) {
-        this.freshdesk_id = freshdesk_id;
-    }
-
-    public String getFreshdesk_id() {
-        return freshdesk_id;
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getTwitter_handle() {
+        return twitter_handle;
+    }
+
     public void setTwitter_handle(String twitter_handle) {
         this.twitter_handle = twitter_handle;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFreshdesk_id() {
+        return freshdesk_id;
+    }
+
+    public void setFreshdesk_id(String freshdesk_id) {
+        this.freshdesk_id = freshdesk_id;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
     }
 
     public void setCreated_at(Date created_at) {
@@ -296,20 +296,12 @@ public class User {
         this.updated_at = updated_at;
     }
 
-    public String getName() {
-        return name;
+    public ArrayList<String> getOtherEmails() {
+        return otherEmails;
     }
 
-    public String getTwitter_handle() {
-        return twitter_handle;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Date getCreated_at() {
-        return created_at;
+    public void setOtherEmails(ArrayList<String> otherEmails) {
+        this.otherEmails = otherEmails;
     }
 
     @Override
